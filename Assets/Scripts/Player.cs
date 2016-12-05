@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Networking;
 
 public class Player : NetworkBehaviour
@@ -45,6 +44,9 @@ public class Player : NetworkBehaviour
 
     public float moveSpeed = 10f;
 
+    [SyncVar]
+    private float _currentHealth;
+
     public override void OnStartClient()
     {
         Debug.Log("OnStartClient");
@@ -56,6 +58,11 @@ public class Player : NetworkBehaviour
 
         GameManager.RegisterPlayer(netId, player);
     }
+
+    public void RpcTakeDamage(float damage, string sourcePlayerId)
+    {
+        _currentHealth -= damage;
+    }
     
     private void Start()
     {
@@ -63,6 +70,8 @@ public class Player : NetworkBehaviour
 
         if (!isLocalPlayer)
         {
+            SetLayerRecursively(gameObject, LayerMask.NameToLayer("RemotePlayer"));
+
             if (_disableComponents != null && _disableComponents.Length > 0)
             {
                 for (int i = 0; i < _disableComponents.Length; i++)
@@ -73,8 +82,8 @@ public class Player : NetworkBehaviour
         }
         else
         {
-            //_playerGUI = Instantiate(_playerGUIPrefab);
-            //_playerGUI.player = this;
+            _playerGUI = Instantiate(_playerGUIPrefab);
+            _playerGUI.player = this;
         }
     }
 
@@ -94,10 +103,6 @@ public class Player : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.Q))
         {
             CmdSwitchWeapon();
-        }
-        
-        if (Input.GetButtonDown("Fire1"))
-        {
         }
     }
     
@@ -144,5 +149,21 @@ public class Player : NetworkBehaviour
         GameManager.UnRegisterPlayer(transform.name);
 
         Destroy(_playerGUI);
+    }
+
+    public static void SetLayerRecursively(GameObject go, int layer)
+    {
+        if (go == null)
+            return;
+
+        go.layer = layer;
+
+        foreach (Transform _child in go.transform)
+        {
+            if (_child == null)
+                continue;
+
+            SetLayerRecursively(_child.gameObject, layer);
+        }
     }
 }
