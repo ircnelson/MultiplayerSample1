@@ -1,13 +1,51 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(Player))]
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
-	void Update ()
-    {
-        var x = Input.GetAxis("Horizontal") * Time.deltaTime * 150.0f;
-        var z = Input.GetAxis("Vertical") * Time.deltaTime * 3.0f;
+    private Player _player;
+    private Vector3 _velocity;
+    private Rigidbody _rigidbody;
 
-        transform.Rotate(0, x, 0);
-        transform.Translate(0, 0, z);
+    private void Start()
+    {
+        _player = GetComponent<Player>();
+        _rigidbody = GetComponent<Rigidbody>();
+    }
+
+    private void FixedUpdate()
+    {
+        _rigidbody.MovePosition(_rigidbody.position + _velocity * Time.fixedDeltaTime);
+    }
+
+    private void Update ()
+    {
+        // Movement
+        Vector3 moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+        _velocity = moveInput.normalized * _player.moveSpeed;
+
+        // Look at
+        LookAt();
+    }
+
+    private void LookAt()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        Plane groundPlane = new Plane(Vector3.up, Vector3.up * _player.Holder.position.y);
+
+        float rayDistance;
+
+        if (groundPlane.Raycast(ray, out rayDistance))
+        {
+            Vector3 point = ray.GetPoint(rayDistance);
+
+            Debug.DrawLine(ray.origin, point, Color.yellow);
+
+            Vector3 heightCorrectedPoint = new Vector3(point.x, transform.position.y, point.z);
+
+            transform.LookAt(heightCorrectedPoint);
+        }
     }
 }

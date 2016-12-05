@@ -4,7 +4,7 @@ using UnityEngine.Networking;
 
 public class Player : NetworkBehaviour
 {
-    [Header("Setups")]
+    [Header("Setup")]
     [SerializeField]
     private PlayerGUI _playerGUIPrefab;
 
@@ -19,6 +19,7 @@ public class Player : NetworkBehaviour
     }
 
     [SerializeField]
+    [Tooltip("Usado para desabilitar os componentes que não devem ser usados no player remoto")]
     private Behaviour[] _disableComponents;
 
     [Header("Player")]
@@ -28,11 +29,21 @@ public class Player : NetworkBehaviour
     [SerializeField]
     private Transform _holder;
 
+    public Transform Holder
+    {
+        get
+        {
+            return _holder;
+        }
+    }
+
     [SerializeField]
     private GameObject[] _weapons;
 
     [SyncVar]
     private int _currentWeaponIndex = 0;
+
+    public float moveSpeed = 10f;
 
     public override void OnStartClient()
     {
@@ -84,8 +95,12 @@ public class Player : NetworkBehaviour
         {
             CmdSwitchWeapon();
         }
+        
+        if (Input.GetButtonDown("Fire1"))
+        {
+        }
     }
-
+    
     [Command]
     private void CmdSwitchWeapon()
     {
