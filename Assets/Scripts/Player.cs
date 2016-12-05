@@ -84,6 +84,8 @@ public class Player : NetworkBehaviour
         {
             _playerGUI = Instantiate(_playerGUIPrefab);
             _playerGUI.player = this;
+
+            Camera.main.GetComponent<MoveCamera>().followTarget = transform;
         }
     }
 
