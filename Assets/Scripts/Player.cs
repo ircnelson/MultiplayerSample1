@@ -39,9 +39,6 @@ public class Player : NetworkBehaviour
     [SerializeField]
     private GameObject[] _weapons;
 
-    [SyncVar]
-    private int _currentWeaponIndex = 0;
-
     public float moveSpeed = 10f;
 
     [SyncVar(hook = "OnCurrentHealthChanged")]
@@ -76,7 +73,7 @@ public class Player : NetworkBehaviour
 
         if (!isLocalPlayer)
         {
-            SetLayerRecursively(gameObject, LayerMask.NameToLayer("RemotePlayer"));
+            Util.SetLayerRecursively(gameObject, LayerMask.NameToLayer("RemotePlayer"));
         }
         else
         {
@@ -94,41 +91,6 @@ public class Player : NetworkBehaviour
         GetComponent<MeshRenderer>().material.color = Color.green;
 
         CmdPlayerJoined(transform.name, User.instance.Nickname);
-    }
-
-    private void Update()
-    {
-        if (!isLocalPlayer) return;
-
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            CmdSwitchWeapon();
-        }
-    }
-    
-    [Command]
-    private void CmdSwitchWeapon()
-    {
-        RpcSwitchWeapon();
-    }
-    
-    [ClientRpc]
-    private void RpcSwitchWeapon()
-    {
-        Debug.Log("Player: " + nickname);
-        Debug.Log("Switch weapon");
-        Debug.Log("Weapon index: " + _currentWeaponIndex);
-
-        if (_holder.childCount > 0)
-        {
-            Destroy(_holder.GetChild(0).gameObject);
-        }
-
-        var currentWeapon = (GameObject)Instantiate(_weapons[_currentWeaponIndex], _holder.position, _holder.transform.rotation, _holder.transform);
-
-        _currentWeaponIndex++;
-
-        if (_currentWeaponIndex >= _weapons.Length) _currentWeaponIndex = 0;
     }
 
     [Command]
@@ -156,21 +118,5 @@ public class Player : NetworkBehaviour
         GameManager.UnRegisterPlayer(transform.name);
 
         Destroy(_playerGUI);
-    }
-
-    public static void SetLayerRecursively(GameObject go, int layer)
-    {
-        if (go == null)
-            return;
-
-        go.layer = layer;
-
-        foreach (Transform _child in go.transform)
-        {
-            if (_child == null)
-                continue;
-
-            SetLayerRecursively(_child.gameObject, layer);
-        }
     }
 }

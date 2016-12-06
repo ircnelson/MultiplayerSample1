@@ -2,9 +2,6 @@
 
 public class MoveCamera : MonoBehaviour
 {
-    [SerializeField]
-    private float speed = 10f;
-
     private Vector3 _offset;
 
     public Transform followTarget;
