@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.Networking;
 
 public class GameManager : MonoBehaviour
 {
@@ -25,6 +26,8 @@ public class GameManager : MonoBehaviour
     {
         string playerId = PLAYER_ID_PREFIX + netId;
 
+        if (players.ContainsKey(playerId)) return;
+
         players.Add(playerId, player);
 
         player.transform.name = playerId;
@@ -32,6 +35,8 @@ public class GameManager : MonoBehaviour
 
     public static void UnRegisterPlayer(string playerId)
     {
+        if (!players.ContainsKey(playerId)) return;
+
         players.Remove(playerId);
     }
 

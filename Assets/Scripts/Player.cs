@@ -44,9 +44,14 @@ public class Player : NetworkBehaviour
 
     public float moveSpeed = 10f;
 
-    [SyncVar]
-    private float _currentHealth;
+    [SyncVar(hook = "OnCurrentHealthChanged")]
+    private float _currentHealth = 100f;
 
+    public float CurrentHealth
+    {
+        get { return _currentHealth; }
+    }
+    
     public override void OnStartClient()
     {
         Debug.Log("OnStartClient");
@@ -59,6 +64,7 @@ public class Player : NetworkBehaviour
         GameManager.RegisterPlayer(netId, player);
     }
 
+    [ClientRpc]
     public void RpcTakeDamage(float damage, string sourcePlayerId)
     {
         _currentHealth -= damage;
@@ -138,6 +144,11 @@ public class Player : NetworkBehaviour
 
             Debug.Log(nickname + " has joined.");
         } 
+    }
+
+    private void OnCurrentHealthChanged(float value)
+    {
+        // apply effect on HUD
     }
 
     private void OnDisable()
