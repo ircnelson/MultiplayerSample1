@@ -1,13 +1,18 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerGUI : MonoBehaviour
 {
+    [SerializeField]
+    private Text _healthText;
+
+    [SerializeField]
+    private Text _ammoText;
+
     public Player player;
 
-    private void OnGUI()
+    private void Update()
     {
-        GUI.color = Color.black;
-        GUI.Label(new Rect(20, 200, 100, 20), string.Format("Health: {0}", player.CurrentHealth.ToString()), new GUIStyle { fontStyle = FontStyle.Bold });
-
+        _healthText.text = player.CurrentHealth.ToString();
     }
 }
