@@ -71,14 +71,6 @@ public class Player : NetworkBehaviour
         if (!isLocalPlayer)
         {
             SetLayerRecursively(gameObject, LayerMask.NameToLayer("RemotePlayer"));
-
-            if (_disableComponents != null && _disableComponents.Length > 0)
-            {
-                for (int i = 0; i < _disableComponents.Length; i++)
-                {
-                    _disableComponents[i].enabled = false;
-                }
-            }
         }
         else
         {
@@ -136,6 +128,8 @@ public class Player : NetworkBehaviour
     [Command]
     private void CmdPlayerJoined(string playerId, string nickname)
     {
+        if (!isLocalPlayer && isServer) return;
+
         var player = GameManager.GetPlayer(playerId);
         
         if (player != null)

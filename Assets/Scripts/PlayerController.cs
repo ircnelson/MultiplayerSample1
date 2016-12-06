@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 
 [RequireComponent(typeof(Player))]
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
     private Player _player;
     private Vector3 _velocity;
@@ -10,6 +11,11 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        if (!isLocalPlayer)
+        {
+            enabled = false;
+        }
+
         _player = GetComponent<Player>();
         _rigidbody = GetComponent<Rigidbody>();
     }
