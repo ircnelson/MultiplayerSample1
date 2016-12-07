@@ -27,6 +27,7 @@ public class WeaponManager : NetworkBehaviour {
 	void Start ()
 	{
 		EquipWeapon(_primaryWeapon);
+        _primaryWeapon.Reload();
 	}
 
     private void Update()

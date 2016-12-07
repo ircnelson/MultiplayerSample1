@@ -41,7 +41,7 @@ public class Player : NetworkBehaviour
 
     public float moveSpeed = 10f;
 
-    [SyncVar(hook = "OnCurrentHealthChanged")]
+    [SyncVar]
     private float _currentHealth = 100f;
 
     public float CurrentHealth
@@ -108,11 +108,12 @@ public class Player : NetworkBehaviour
         } 
     }
 
-    private void OnCurrentHealthChanged(float value)
+    [ContextMenu("Damage")]
+    private void ForceDamage()
     {
-        // apply effect on HUD
+        _currentHealth -= 10f;
     }
-
+    
     private void OnDisable()
     {
         GameManager.UnRegisterPlayer(transform.name);
